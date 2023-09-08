@@ -1,19 +1,29 @@
+import { showPostModal } from "./modals.js";
 import { renderAllPosts } from "./render.js";
+import { getAllPosts, getCurrentUserInfo } from "./requests.js";
 
-function showUserMenu() {
-  const userAction = document.querySelector(".user__image");
-  const menu = document.querySelector(".user__logout");
-
-  userAction.addEventListener("click", (e) => {
-    menu.classList.toggle("hidden");
-  });
+function getData() {
+  getCurrentUserInfo()
+  renderAllPosts()
 }
 
-function main() {
-  // Adiciona os eventos de click ao menu flutuante de logout
-  showUserMenu();
-  // Renderiza todos os posts no feed (render.js)
-  renderAllPosts();
+getData();
+
+showPostModal() 
+
+
+function handleLogout() {
+  const button = document.querySelector("#user__image")
+  const div = document.querySelector(".user__logout")
+  button.addEventListener("click", () => {
+    div.classList.toggle("hidden")
+  })
+  const logout = document.querySelector(".logout__button")
+  logout.addEventListener("click", () => {
+    location.replace("../../")
+    localStorage.clear()
+  })
 }
 
-main();
+handleLogout()
+

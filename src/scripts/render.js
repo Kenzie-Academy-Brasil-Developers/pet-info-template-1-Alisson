@@ -1,4 +1,5 @@
-import { getCurrentUserInfo, getAllPosts } from "./requests.js";
+import { editModal, openPost, postDelete } from "./modals.js";
+import { getCurrentUserInfo, getAllPosts, deleteReques, getPost } from "./requests.js";
 
 // Renderiza todos os posts
 export async function renderAllPosts() {
@@ -10,6 +11,7 @@ export async function renderAllPosts() {
     const postArticle = await renderPost(post, true);
     postSection.appendChild(postArticle);
   });
+  postDelete()
 }
 
 // Renderiza um post
@@ -34,8 +36,16 @@ async function renderPost(post) {
   openButton.innerText = "Acessar publicação";
   openButton.dataset.id = post.id;
 
-  postContainer.append(postHeader, postTitle, postContent, openButton);
+  openButton.addEventListener("click", async () => {
+    const post = await getPost(openButton.dataset.id)
+    openPost(post)
+})
 
+
+  postContainer.append(postHeader, postTitle, postContent, openButton);
+  if (checkEditPermission(post.user.id) === true) {
+    postContainer.append(renderPostActions(post.id))
+  }
   return postContainer;
 }
 
@@ -121,11 +131,32 @@ function renderPostActions(postID) {
 
   actionsContainer.append(editButton, deleteButton);
 
+
+  const modal = document.querySelector(".modal__delete")
+  const deleteHandle = document.querySelector("#confirm__delete__button")  
+  deleteButton.addEventListener("click", () => {
+    modal.showModal()
+    deleteHandle.dataset.id = deleteButton.dataset.id
+})
+deleteHandle.addEventListener("click", () => {
+  modal.close()
+  deleteReques(deleteHandle.dataset.id)
+})
+
+const modalEdit = document.querySelector(".modal__edition")
+editButton.addEventListener("click", async () => {
+  modalEdit.showModal()
+  const post = await getPost(editButton.dataset.id)
+  editModal(post)
+ 
+})
+
+
   return actionsContainer;
 }
 
 // Lida com a data atual
-function handleDate(timeStamp) {
+export function handleDate(timeStamp) {
   const months = [
     "Janeiro",
     "Fevereiro",

@@ -67,3 +67,7 @@ input:focus::placeholder {
 .hidden {
   opacity: 0;
 }
+
+.error__text {
+  color: red;
+}
